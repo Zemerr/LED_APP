@@ -40,6 +40,12 @@ public class LanSearch : MonoBehaviour
         // Create our list
         lstReceivedMessages = new List<ReceivedMessage>();
         IP = GetIP(ADDRESSFAM.IPv4);
+        
+        delWhenServerMustStarted = StartServer;
+        delWhenServerFound = FindServer;
+
+
+        StartSearchBroadCasting(FindServer, StartServer);
     }
 
     void Update()
@@ -279,6 +285,15 @@ public class LanSearch : MonoBehaviour
             }
         }
         return output;
+    }
+
+    private static void StartServer()
+    {
+       Debug.Log("Start Server");
+    }
+    private static void FindServer(string strIP)
+    {
+        Debug.Log("Find Server");
     }
 
     public enum ADDRESSFAM
