@@ -65,7 +65,7 @@ public class LanSearch : MonoBehaviour
             if (currentState == enuState.Searching)
             {
                 // This rather complex piece of code is needed to be able to loop through a list while deleting members of that same list
-                bool bLoopedAll = false;
+                bool bLoopedAll = true;
                 while (!bLoopedAll && lstReceivedMessages.Count > 0)
                 {
                     foreach (ReceivedMessage objMessage in lstReceivedMessages)
@@ -111,13 +111,14 @@ public class LanSearch : MonoBehaviour
                     {
                         // The score of this received message is higher, so this will be our new server
                         strIPOfServer = objMessage.strIP;
+                        Debug.Log("******WAHT " +  objMessage.strIP);
                     }
                 }
                 // If after the loop the highest IP is still our own, call delegate to start a server and stop searching
                 if (strIPOfServer == IP)
                 {
                     StopSearching();
-                    strMessage = "We will start server.";
+                    strMessage = "Nothing found.";
                     delWhenServerMustStarted();
                 }
                 // If it's not, someone else must start the server. We will simply have to wait as the server is clearly not ready yet
@@ -126,7 +127,7 @@ public class LanSearch : MonoBehaviour
                     strMessage = "Found server. Waiting for server to get ready...";
                     // Clear the list and do the search again.
                     lstReceivedMessages.Clear();
-                    fTimeSearchStarted = Time.time;
+                    // fTimeSearchStarted = Time.time;
                 }
             }
         }
@@ -146,16 +147,19 @@ public class LanSearch : MonoBehaviour
         IPEndPoint objSendersIPEndPoint = new IPEndPoint(IPAddress.Any, 0);
         // Read the message
         byte[] objByteMessage = objUDPClient.EndReceive(objResult, ref objSendersIPEndPoint);
+        Debug.Log("Start");
         // If the received message has content and it was not sent by ourselves...
         if (objByteMessage.Length > 0 &&
             !objSendersIPEndPoint.Address.ToString().Equals(IP))
         {
+            Debug.Log("Here");
             // Translate message to string
             string strReceivedMessage = System.Text.Encoding.ASCII.GetString(objByteMessage);
             // Create a ReceivedMessage struct to store this message in the list
             ReceivedMessage objReceivedMessage = new ReceivedMessage();
-            objReceivedMessage.fTime = Time.time;
+            // objReceivedMessage.fTime = Time.time;
             objReceivedMessage.strIP = objSendersIPEndPoint.Address.ToString();
+            Debug.Log(objReceivedMessage.strIP);
             objReceivedMessage.bIsReady = strReceivedMessage == strServerReady ? true : false;
             lstReceivedMessages.Add(objReceivedMessage);
         }
