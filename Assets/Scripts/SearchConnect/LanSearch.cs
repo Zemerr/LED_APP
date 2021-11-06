@@ -9,23 +9,29 @@ public class LanSearch : MonoBehaviour
 {
     public string IP = "";
 
-    public delegate void delJoinServer(string strIP); // Definition of JoinServer Delegate, takes a string as argument that holds the ip of the server
-    public delegate void delStartServer(); // Definition of StartServer Delegate
+    // public delegate void delJoinServer(string strIP); // Definition of JoinServer Delegate, takes a string as argument that holds the ip of the server
+    // public delegate void delStartServer(); // Definition of StartServer Delegate
+
     private enum enuState {
         NotActive,
         Searching
     }; // Definition of State Enumeration.
-    private struct ReceivedMessage { public float fTime; public string strIP;} // Definition of a Received Message struct. This is the form in which we will store messages
+    public struct ReceivedMessage { 
+        // public float fTime;
+        public string strIP;
+        public bool isShown;
+    } // Definition of a Received Message struct. This is the form in which we will store messages
 
     private enuState currentState = enuState.NotActive;
     private UdpClient objUDPClient; // The UDPClient we will use to send and receive messages
-    private List<ReceivedMessage> lstReceivedMessages; // The list we store all received messages in, when searching
-    private delJoinServer delWhenServerFound; // Reference to the delegate that will be called when a server is found, set by StartSearchBroadcasting()
-    private delStartServer delWhenServerMustStarted; // Reference to the delegate that will be called when a server must be created, set by StartSearchBroadcasting()
+    private HashSet<ReceivedMessage> lstReceivedMessages; // The list we store all received messages in, when searching
+
+    // private delJoinServer delWhenServerFound; // Reference to the delegate that will be called when a server is found, set by StartSearchBroadcasting()
+    // private delStartServer delWhenServerMustStarted; // Reference to the delegate that will be called when a server must be created, set by StartSearchBroadcasting()
 
     private float fTimeLastMessageSent;
     private float fIntervalMessageSending = 1f; // The interval in seconds between the sending of messages
-    private float fTimeMessagesLive = 3; // The time a message 'lives' in our list, before it gets deleted
+    // private float fTimeMessagesLive = 3; // The time a message 'lives' in our list, before it gets deleted
     private float fTimeToSearch = 5; // The time the script will search, before deciding what to do
     private float fTimeSearchStarted;
 
@@ -33,14 +39,14 @@ public class LanSearch : MonoBehaviour
     void Start()
     {
         // Create our list
-        lstReceivedMessages = new List<ReceivedMessage>();
+        lstReceivedMessages = new HashSet<ReceivedMessage>();
         IP = GetIP(ADDRESSFAM.IPv4);
         
-        delWhenServerMustStarted = StartServer;
-        delWhenServerFound = FindServer;
+        // delWhenServerMustStarted = StartServer;
+        // delWhenServerFound = FindServer;
 
 
-        StartSearchBroadCasting(FindServer, StartServer);
+        // StartSearchBroadCasting(FindServer, StartServer);
     }
 
     void Update()
@@ -63,32 +69,33 @@ public class LanSearch : MonoBehaviour
 
 
          
-            if (currentState == enuState.Searching && Time.time > fTimeSearchStarted + fTimeToSearch)
+        if (currentState == enuState.Searching && Time.time > fTimeSearchStarted + fTimeToSearch)
+        {
+            // We are. Now determine who's gonna be the server.
+
+            // This string holds the ip of the new server. We will start off pointing ourselves as the new server
+            string strIPOfServer = IP;
+            Debug.Log("-------- END OF SEARCH ------");
+            // Next, we loop through the other messages, to see if there are other players that have more right to be the server (based on IP)
+            foreach (ReceivedMessage objMessage in lstReceivedMessages)
             {
-                // We are. Now determine who's gonna be the server.
-
-                // This string holds the ip of the new server. We will start off pointing ourselves as the new server
-                string strIPOfServer = IP;
-                // Next, we loop through the other messages, to see if there are other players that have more right to be the server (based on IP)
-                foreach (ReceivedMessage objMessage in lstReceivedMessages)
-                {
-
-                }
-                // If after the loop the highest IP is still our own, call delegate to start a server and stop searching
-                if (strIPOfServer == IP)
-                {
-                    StopSearching();
-
-                }
-                // If it's not, someone else must start the server. We will simply have to wait as the server is clearly not ready yet
-                else
-                {
-
-                    // Clear the list and do the search again.
-                    lstReceivedMessages.Clear();
-                    // fTimeSearchStarted = Time.time;
-                }
+                Debug.Log(objMessage.strIP);
             }
+            StopBroadCasting();
+            // If after the loop the highest IP is still our own, call delegate to start a server and stop searching
+            // if (strIPOfServer == IP)
+            // {
+            //     StopSearching();
+            // }
+            // // If it's not, someone else must start the server. We will simply have to wait as the server is clearly not ready yet
+            // else
+            // {
+
+            //     // Clear the list and do the search again.
+            //     lstReceivedMessages.Clear();
+            //     // fTimeSearchStarted = Time.time;
+            // }
+        }
     
     }
 
@@ -102,27 +109,30 @@ public class LanSearch : MonoBehaviour
     // This is called when the asynchronous receive procedure received a message
     private void EndAsyncReceive(IAsyncResult objResult)
     {
+        bool answer = false;
         // Create an empty EndPoint, that will be filled by the UDPClient, holding information about the sender
         IPEndPoint objSendersIPEndPoint = new IPEndPoint(IPAddress.Any, 0);
         // Read the message
         byte[] objByteMessage = objUDPClient.EndReceive(objResult, ref objSendersIPEndPoint);
-        Debug.Log("Start");
+        Debug.Log("Start recive mes");
         // If the received message has content and it was not sent by ourselves...
         if (objByteMessage.Length > 0 &&
             !objSendersIPEndPoint.Address.ToString().Equals(IP))
         {
-            Debug.Log("Here");
+            Debug.Log("New server found");
             // Translate message to string
             string strReceivedMessage = System.Text.Encoding.ASCII.GetString(objByteMessage);
             if (strReceivedMessage == NetworkingVal.answerFromServer) 
             {
-            // Create a ReceivedMessage struct to store this message in the list
-            ReceivedMessage objReceivedMessage = new ReceivedMessage();
-            // objReceivedMessage.fTime = Time.time;
-            objReceivedMessage.strIP = objSendersIPEndPoint.Address.ToString();
-            Debug.Log(objReceivedMessage.strIP);
+                // Create a ReceivedMessage struct to store this message in the list
+                ReceivedMessage objReceivedMessage = new ReceivedMessage();
+                // objReceivedMessage.fTime = Time.time;
+                objReceivedMessage.strIP = objSendersIPEndPoint.Address.ToString();
+                objReceivedMessage.isShown = false;
+                Debug.Log(objReceivedMessage.strIP);
 
-            lstReceivedMessages.Add(objReceivedMessage);
+                answer = lstReceivedMessages.Add(objReceivedMessage);
+                Debug.Log("ADD = " + answer);
             }
         }
         // Check if we're still searching and if so, restart the receive procedure
@@ -151,11 +161,8 @@ public class LanSearch : MonoBehaviour
     // Method to be called by some other object (eg. a NetworkController) to start a broadcast search
     // It takes two delegates; the first for when this object finds a server that can be connected to, 
     // the second for when this player is determined to start a server itself.
-    public void StartSearchBroadCasting(delJoinServer connectToServer, delStartServer startServer)
+    public void StartSearchBroadCasting()
     {
-        // Set the delegate references, so other functions within this class can call it
-        delWhenServerFound = connectToServer;
-        delWhenServerMustStarted = startServer;
         // Start a broadcasting session (this basically prepares the UDPClient)
         StartBroadcastingSession();
         // Start a search
@@ -245,6 +252,11 @@ public class LanSearch : MonoBehaviour
     private static void FindServer(string strIP)
     {
         Debug.Log("Find Server");
+    }
+
+    public void Testbut()
+    {
+        Debug.Log("000000000000000000Clcik00000000000000000");
     }
 
     public enum ADDRESSFAM
