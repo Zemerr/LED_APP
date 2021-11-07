@@ -7,24 +7,24 @@ using System.Net.NetworkInformation;
 
 public class LanSearch : MonoBehaviour
 {
+    [SerializeField] private ShowLampButtons ShowLamp;
     public string IP = "";
 
     // public delegate void delJoinServer(string strIP); // Definition of JoinServer Delegate, takes a string as argument that holds the ip of the server
     // public delegate void delStartServer(); // Definition of StartServer Delegate
 
-    private enum enuState {
+    public enum enuState {
         NotActive,
         Searching
     }; // Definition of State Enumeration.
     public struct ReceivedMessage { 
         // public float fTime;
         public string strIP;
-        public bool isShown;
     } // Definition of a Received Message struct. This is the form in which we will store messages
 
-    private enuState currentState = enuState.NotActive;
+    public enuState currentState = enuState.NotActive;
     private UdpClient objUDPClient; // The UDPClient we will use to send and receive messages
-    private HashSet<ReceivedMessage> lstReceivedMessages; // The list we store all received messages in, when searching
+    public HashSet<ReceivedMessage> lstReceivedMessages; // The list we store all received messages in, when searching
 
     // private delJoinServer delWhenServerFound; // Reference to the delegate that will be called when a server is found, set by StartSearchBroadcasting()
     // private delStartServer delWhenServerMustStarted; // Reference to the delegate that will be called when a server must be created, set by StartSearchBroadcasting()
@@ -75,13 +75,18 @@ public class LanSearch : MonoBehaviour
 
             // This string holds the ip of the new server. We will start off pointing ourselves as the new server
             string strIPOfServer = IP;
+            StopSearching();
+#if UNITY_EDITOR
             Debug.Log("-------- END OF SEARCH ------");
+#endif
             // Next, we loop through the other messages, to see if there are other players that have more right to be the server (based on IP)
             foreach (ReceivedMessage objMessage in lstReceivedMessages)
             {
+#if UNITY_EDITOR
                 Debug.Log(objMessage.strIP);
+#endif
             }
-            StopBroadCasting();
+            // StopBroadCasting();
             // If after the loop the highest IP is still our own, call delegate to start a server and stop searching
             // if (strIPOfServer == IP)
             // {
@@ -114,36 +119,44 @@ public class LanSearch : MonoBehaviour
         IPEndPoint objSendersIPEndPoint = new IPEndPoint(IPAddress.Any, 0);
         // Read the message
         byte[] objByteMessage = objUDPClient.EndReceive(objResult, ref objSendersIPEndPoint);
+#if UNITY_EDITOR
         Debug.Log("Start recive mes");
+#endif
         // If the received message has content and it was not sent by ourselves...
         if (objByteMessage.Length > 0 &&
             !objSendersIPEndPoint.Address.ToString().Equals(IP))
         {
-            Debug.Log("New server found");
             // Translate message to string
             string strReceivedMessage = System.Text.Encoding.ASCII.GetString(objByteMessage);
+#if UNITY_EDITOR
+            Debug.Log("New server found " + objSendersIPEndPoint.Address.ToString());
+#endif
             if (strReceivedMessage == NetworkingVal.answerFromServer) 
             {
                 // Create a ReceivedMessage struct to store this message in the list
                 ReceivedMessage objReceivedMessage = new ReceivedMessage();
                 // objReceivedMessage.fTime = Time.time;
                 objReceivedMessage.strIP = objSendersIPEndPoint.Address.ToString();
-                objReceivedMessage.isShown = false;
+#if UNITY_EDITOR
                 Debug.Log(objReceivedMessage.strIP);
+#endif
 
                 answer = lstReceivedMessages.Add(objReceivedMessage);
+                if (answer &&  (ShowLamp.couldAddlampBut == false))
+                {
+                    ShowLamp.IPtoADD = objReceivedMessage.strIP;
+                    ShowLamp.couldAddlampBut = true;
+                }
+#if UNITY_EDITOR
                 Debug.Log("ADD = " + answer);
+#endif
             }
         }
         // Check if we're still searching and if so, restart the receive procedure
-        if (currentState == enuState.Searching) BeginAsyncReceive();
+        if (currentState == enuState.Searching)
+            BeginAsyncReceive();
     }
 
-    // Method to stop this object announcing this is a server, used by the script itself
-    private void StopAnnouncing()
-    {
-        currentState = enuState.NotActive;
-    }
     // Method to start this object searching for LAN Broadcast messages sent by players, used by the script itself
     private void StartSearching()
     {
