@@ -23,11 +23,15 @@ public class SearchButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
 
     private static void StartServer()
     {
+#if UNITY_EDITOR
        Debug.Log("Start Server");
+#endif
     }
     private static void FindServer(string strIP)
     {
+#if UNITY_EDITOR
         Debug.Log("Find Server");
+#endif
     }
 
 }

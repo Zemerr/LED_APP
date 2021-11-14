@@ -8,6 +8,7 @@ using System.Net.NetworkInformation;
 public class LanSearch : MonoBehaviour
 {
     [SerializeField] private ShowLampButtons ShowLamp;
+    [SerializeField] private GameObject radar;
     public string IP = "";
 
     // public delegate void delJoinServer(string strIP); // Definition of JoinServer Delegate, takes a string as argument that holds the ip of the server
@@ -15,7 +16,8 @@ public class LanSearch : MonoBehaviour
 
     public enum enuState {
         NotActive,
-        Searching
+        Searching,
+        Finished
     }; // Definition of State Enumeration.
     public struct ReceivedMessage { 
         // public float fTime;
@@ -76,6 +78,7 @@ public class LanSearch : MonoBehaviour
             // This string holds the ip of the new server. We will start off pointing ourselves as the new server
             string strIPOfServer = IP;
             StopSearching();
+            currentState = enuState.Finished;
 #if UNITY_EDITOR
             Debug.Log("-------- END OF SEARCH ------");
 #endif
@@ -164,10 +167,12 @@ public class LanSearch : MonoBehaviour
         BeginAsyncReceive();
         fTimeSearchStarted = Time.time;
         currentState = enuState.Searching;
+        radar.SetActive (true);
     }
     // Method to stop this object searching for LAN Broadcast messages sent by players, used by the script itself
     private void StopSearching()
     {
+        radar.SetActive (false);
         currentState = enuState.NotActive;
     }
 
@@ -177,7 +182,10 @@ public class LanSearch : MonoBehaviour
     public void StartSearchBroadCasting()
     {
         // Start a broadcasting session (this basically prepares the UDPClient)
-        StartBroadcastingSession();
+        if (currentState == enuState.NotActive)
+        {
+            StartBroadcastingSession();
+        }
         // Start a search
         StartSearching();
     }
