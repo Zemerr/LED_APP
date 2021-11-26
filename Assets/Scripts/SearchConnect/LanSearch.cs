@@ -43,6 +43,7 @@ public class LanSearch : MonoBehaviour
         // Create our list
         lstReceivedMessages = new HashSet<ReceivedMessage>();
         IP = GetIP(ADDRESSFAM.IPv4);
+        Debug.Log("MY IP = " + IP);
         
         // delWhenServerMustStarted = StartServer;
         // delWhenServerFound = FindServer;
@@ -77,8 +78,8 @@ public class LanSearch : MonoBehaviour
 
             // This string holds the ip of the new server. We will start off pointing ourselves as the new server
             string strIPOfServer = IP;
-            StopSearching();
-            currentState = enuState.Finished;
+            // StopSearching();
+            // currentState = enuState.Finished;
 #if UNITY_EDITOR
             Debug.Log("-------- END OF SEARCH ------");
 #endif
@@ -89,7 +90,7 @@ public class LanSearch : MonoBehaviour
                 Debug.Log(objMessage.strIP);
 #endif
             }
-            // StopBroadCasting();
+            StopBroadCasting();
             // If after the loop the highest IP is still our own, call delegate to start a server and stop searching
             // if (strIPOfServer == IP)
             // {
@@ -148,6 +149,7 @@ public class LanSearch : MonoBehaviour
                 if (answer &&  (ShowLamp.couldAddlampBut == false))
                 {
                     ShowLamp.IPtoADD = objReceivedMessage.strIP;
+                    Debug.Log("IPtoADD = " + objReceivedMessage.strIP);
                     ShowLamp.couldAddlampBut = true;
                 }
 #if UNITY_EDITOR

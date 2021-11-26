@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using TMPro;
 
 
 // public class LampButtonToConnect : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
@@ -23,11 +24,14 @@ using UnityEngine.EventSystems;
 public class LampButtonToConnect : MonoBehaviour
 {
     [SerializeField] private GameObject connectPanel;
+     [SerializeField] private TextMeshProUGUI text;
 
     public void ConnectButton() {
 #if UNITY_EDITOR
         Debug.Log("..........Connection............");
 #endif
+        Client.instance.ip = text.text;
+        Client.instance.ConnectToServer();
         gameObject.SetActive (false);
         connectPanel.SetActive (true);
     }
