@@ -10,14 +10,18 @@ public class Client : MonoBehaviour
     public static Client instance;
     public static int dataBufferSize = 4096;
 
-    public string ip = "127.0.0.1";
+    public string ip = "192.168.0.101";
     public int port = 8888;
-    public int myId = 0;
+    public int myId = 3;
 
     public UDP udp;
 
     private delegate void PacketHandler(Packet _packet);
     private static Dictionary<int, PacketHandler> packetHandlers;
+
+    public void SetIP(string ip) {
+        instance.ip = ip;
+    }
 
     private void Awake()
     {
@@ -27,12 +31,14 @@ public class Client : MonoBehaviour
         }
         else if (instance != this)
         {
+#if UNITY_EDITOR
             Debug.Log("Instance already exists, destroying object!");
+#endif
             Destroy(this);
         }
     }
 
-    private void Start()
+    public void StartServer()
     {
         udp = new UDP();
     }
@@ -40,6 +46,10 @@ public class Client : MonoBehaviour
     public void ConnectToServer()
     {
         InitializeClientData();
+
+#if UNITY_EDITOR
+        Debug.Log("CONNECT TO SERVER " + ip);
+#endif
 
         udp.Connect(port);
     }
@@ -73,10 +83,11 @@ public class Client : MonoBehaviour
         {
             try
             {
-                _packet.InsertInt(instance.myId);
+                // _packet.InsertInt(instance.myId);
                 if (socket != null)
                 {
                     socket.BeginSend(_packet.ToArray(), _packet.Length(), null, null);
+                    
                 }
             }
             catch (Exception _ex)
@@ -97,7 +108,9 @@ public class Client : MonoBehaviour
                     // TODO: disconnect
                     return;
                 }
-
+#if UNITY_EDITOR
+                Debug.Log("RECIEVE DATA FROM LAMP = " + _data.Length);
+#endif
                 HandleData(_data);
             }
             catch
@@ -108,18 +121,25 @@ public class Client : MonoBehaviour
 
         private void HandleData(byte[] _data)
         {
-            using (Packet _packet = new Packet(_data))
-            {
-                int _packetLength = _packet.ReadInt();
-                _data = _packet.ReadBytes(_packetLength);
-            }
+#if UNITY_EDITOR
+            Debug.Log("STARTer HandleData");
+#endif
+            // using (Packet _packet = new Packet(_data))
+            // {
+            //     int _packetLength = _packet.ReadInt();
+            //     _data = _packet.ReadBytes(_packetLength);
+            // }
 
             ThreadManager.ExecuteOnMainThread(() =>
             {
                 using (Packet _packet = new Packet(_data))
                 {
-                    int _packetId = _packet.ReadInt();
-                    packetHandlers[_packetId](_packet);
+                    // int _packetId = _packet.ReadInt();
+                    // packetHandlers[1](_packet);
+// #if UNITY_EDITOR
+//                 Debug.Log("START THEAD MAN");
+// #endif
+                    ClientHandle.RecieveUpdate(_packet);
                 }
             });
         }
@@ -129,9 +149,10 @@ public class Client : MonoBehaviour
     {
         packetHandlers = new Dictionary<int, PacketHandler>()
         {
-            { (int)ServerPackets.welcome, ClientHandle.Welcome },
-            { (int)ServerPackets.udpTest, ClientHandle.UDPTest }
+            { (int)ServerPackets.mainUpdate, ClientHandle.RecieveUpdate },
         };
+#if UNITY_EDITOR
         Debug.Log("Initialized packets.");
+#endif
     }
 }

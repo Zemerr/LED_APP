@@ -37,6 +37,10 @@ public class SwichBut : MonoBehaviour, IPointerDownHandler
 #if UNITY_EDITOR
             Debug.Log("..........SWITCH OFF............");
 #endif
+            if (!onlyFronSide)
+            {
+                ClientSend.SendP_OFF();
+            }
             GetComponent<Image>().color = ofColor;
             switcher.gameObject.transform.position = leftSwitchPos;
             swith = false;
@@ -46,6 +50,10 @@ public class SwichBut : MonoBehaviour, IPointerDownHandler
 #if UNITY_EDITOR
             Debug.Log("..........SWITCH ON............");
 #endif
+            if (!onlyFronSide)
+            {
+                ClientSend.SendP_ON();
+            }
             GetComponent<Image>().color = onColor;
             switcher.gameObject.transform.position = rightSwitchPos;
             swith = true;

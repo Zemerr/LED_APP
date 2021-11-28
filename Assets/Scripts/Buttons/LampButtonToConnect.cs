@@ -30,7 +30,8 @@ public class LampButtonToConnect : MonoBehaviour
 #if UNITY_EDITOR
         Debug.Log("..........Connection............");
 #endif
-        Client.instance.ip = text.text;
+        Client.instance.SetIP(text.text);
+        Client.instance.StartServer();
         Client.instance.ConnectToServer();
         gameObject.SetActive (false);
         connectPanel.SetActive (true);

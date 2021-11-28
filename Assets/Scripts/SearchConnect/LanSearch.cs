@@ -149,7 +149,9 @@ public class LanSearch : MonoBehaviour
                 if (answer &&  (ShowLamp.couldAddlampBut == false))
                 {
                     ShowLamp.IPtoADD = objReceivedMessage.strIP;
+#if UNITY_EDITOR
                     Debug.Log("IPtoADD = " + objReceivedMessage.strIP);
+#endif
                     ShowLamp.couldAddlampBut = true;
                 }
 #if UNITY_EDITOR

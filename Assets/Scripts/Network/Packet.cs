@@ -7,15 +7,13 @@ using UnityEngine;
 /// <summary>Sent from server to client.</summary>
 public enum ServerPackets
 {
-    welcome = 1,
-    udpTest
+    mainUpdate = 1,
 }
 
 /// <summary>Sent from client to server.</summary>
 public enum ClientPackets
 {
-    welcomeReceived = 1,
-    updTestReceived
+    updateReceived = 1
 }
 
 public class Packet : IDisposable
@@ -38,7 +36,7 @@ public class Packet : IDisposable
         buffer = new List<byte>(); // Intitialize buffer
         readPos = 0; // Set readPos to 0
 
-        Write(_id); // Write packet id to the buffer
+        // Write(_id); // Write packet id to the buffer
     }
 
     /// <summary>Creates a packet from which data can be read. Used for receiving.</summary>
@@ -77,6 +75,13 @@ public class Packet : IDisposable
     public byte[] ToArray()
     {
         readableBuffer = buffer.ToArray();
+#if UNITY_EDITOR
+        Debug.Log(" COUNT = " + buffer.Count + " to bytes = " +  System.Text.Encoding.ASCII.GetString(readableBuffer).Length);
+        // foreach( byte b in buffer.ToArray() ){
+        //     Debug.Log("b = " + b);
+        // }
+        // Debug.Log("buffer.ToArray" +   readableBuffer.ReadBytes(buffer.Count));
+#endif
         return readableBuffer;
     }
 
@@ -156,8 +161,18 @@ public class Packet : IDisposable
     /// <param name="_value">The string to add.</param>
     public void Write(string _value)
     {
-        Write(_value.Length); // Add the length of the string to the packet
+#if UNITY_EDITOR
+        Debug.Log("STRING TO SENT " + _value);
+#endif
+        // Write(_value.Length); // Add the length of the string to the packet
         buffer.AddRange(Encoding.ASCII.GetBytes(_value)); // Add the string itself
+// #if UNITY_EDITOR
+//         Debug.Log("bytes = " +  System.Text.Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(_value)));
+//         ToArray();
+#if UNITY_EDITOR
+        Debug.Log("STRING LENGTH " + _value.Length + " COUNT = " + buffer.Count);
+#endif    
+// #endif
     }
     #endregion
 
@@ -316,12 +331,14 @@ public class Packet : IDisposable
     {
         try
         {
-            int _length = ReadInt(); // Get the length of the string
-            string _value = Encoding.ASCII.GetString(readableBuffer, readPos, _length); // Convert the bytes to a string
+            // int _length = ReadInt(); // Get the length of the string
+            // string _value = Encoding.ASCII.GetString(readableBuffer, readPos, _length); // Convert the bytes to a string
+            string _value = Encoding.ASCII.GetString(readableBuffer); // Convert the bytes to a string
             if (_moveReadPos && _value.Length > 0)
             {
                 // If _moveReadPos is true string is not empty
-                readPos += _length; // Increase readPos by the length of the string
+                // readPos += _length; // Increase readPos by the length of the string
+                readPos += Length();
             }
             return _value; // Return the string
         }

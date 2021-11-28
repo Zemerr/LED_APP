@@ -5,23 +5,29 @@ using UnityEngine;
 
 public class ClientHandle : MonoBehaviour
 {
-    public static void Welcome(Packet _packet)
-    {
-        string _msg = _packet.ReadString();
-        int _myId = _packet.ReadInt();
 
-        Debug.Log($"Message from server: {_msg}");
-        Client.instance.myId = _myId;
-        // ClientSend.WelcomeReceived();
+        private delegate void UIchange(string _packet);
+        private static UIchange UIdel;
 
-        // Client.instance.udp.Connect(((IPEndPoint)Client.instance.tcp.socket.Client.LocalEndPoint).Port);
-    }
 
-    public static void UDPTest(Packet _packet)
-    {
-        string _msg = _packet.ReadString();
+        private void Start() {
+                UIdel = UpdateUI;
+        }
 
-        Debug.Log($"Received packet via UDP. Contains message: {_msg}");
-        ClientSend.UDPTestReceived();
-    }
+
+
+        public static void RecieveUpdate(Packet _packet)
+        {
+                string _msg = _packet.ReadString();
+                UIdel(_msg);
+#if UNITY_EDITOR
+                Debug.Log($"Received packet via UDP. Contains message: {_msg}");
+#endif
+        }
+
+        private void UpdateUI(string _packet) {
+#if UNITY_EDITOR
+                Debug.Log("____UPDATE UI_____");
+#endif        
+        }
 }

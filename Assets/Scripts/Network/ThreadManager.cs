@@ -6,12 +6,18 @@ public class ThreadManager : MonoBehaviour
 {
     private static readonly List<Action> executeOnMainThread = new List<Action>();
     private static readonly List<Action> executeCopiedOnMainThread = new List<Action>();
-    private static bool actionToExecuteOnMainThread = false;
+    [SerializeField] private static bool actionToExecuteOnMainThread = false;
 
     private void Update()
     {
         UpdateMain();
     }
+
+     public static void Test() {
+#if UNITY_EDITOR
+            Debug.Log("test thread");
+#endif
+     }
 
     /// <summary>Sets an action to be executed on the main thread.</summary>
     /// <param name="_action">The action to be executed on the main thread.</param>
@@ -19,10 +25,14 @@ public class ThreadManager : MonoBehaviour
     {
         if (_action == null)
         {
+#if UNITY_EDITOR
             Debug.Log("No action to execute on main thread!");
+#endif
             return;
         }
-
+#if UNITY_EDITOR
+            Debug.Log("We have action to execute on main thread!");
+#endif
         lock (executeOnMainThread)
         {
             executeOnMainThread.Add(_action);
