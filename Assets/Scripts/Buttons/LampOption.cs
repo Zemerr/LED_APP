@@ -20,8 +20,11 @@ public class LampOption : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     }
     public void OnPointerUp(PointerEventData eventData) {
         transform.position = new Vector3 (transform.position.x, transform.position.y-6f, transform.position.z);
-        main.GetComponent<OptionButtonHelper>().option.SetActive(true);
-        main.GetComponent<OptionButtonHelper>().optionTop.SetActive(true);
+        if (main != null)
+        {
+            main.GetComponent<OptionButtonHelper>().option.SetActive(true);
+            main.GetComponent<OptionButtonHelper>().optionTop.SetActive(true);
+        }
 #if UNITY_EDITOR
         Debug.Log("..........LAMP OPTION............");
 #endif

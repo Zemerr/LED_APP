@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6008620447306389464
 RectTransform:
   m_ObjectHideFlags: 0
@@ -87,6 +87,7 @@ GameObject:
   - component: {fileID: 6008620447786318663}
   - component: {fileID: 6008620447786318662}
   - component: {fileID: 6008620447786318657}
+  - component: {fileID: 1015922496}
   m_Layer: 5
   m_Name: Mode
   m_TagString: Untagged
@@ -101,7 +102,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6008620447786318659}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -196,7 +197,34 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6008620447786318662}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1015922496}
+        m_TargetAssemblyTypeName: ChooseMode, Assembly-CSharp
+        m_MethodName: ChooseMOde
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &1015922496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6008620447786318659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b97a550b8c8b0d141893154a6defc701, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  setObj: {fileID: 6008620447306389467}
+  modePanel: {fileID: 0}
+  setButton: {fileID: 6008620447786318659}
 --- !u!1 &6008620448037024961
 GameObject:
   m_ObjectHideFlags: 0
@@ -231,8 +259,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -171, y: 2}
-  m_SizeDelta: {x: 196.682, y: 86.472}
+  m_AnchoredPosition: {x: -59.282, y: 0.0010233}
+  m_SizeDelta: {x: 420.118, y: 153.35}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6008620448037024964
 CanvasRenderer:

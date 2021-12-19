@@ -67,5 +67,62 @@ public class ClientSend : MonoBehaviour
             SendUDPData(_packet);
         }
     }
+
+    public static void SendP_Mode(int mode)
+    {
+        using (Packet _packet = new Packet())
+        {
+
+            string info = "EFF" + mode;
+            _packet.Write(info);
+#if UNITY_EDITOR
+            Debug.Log(".........SEND MODE........... " + info);
+#endif
+
+            SendUDPData(_packet);
+        }
+    }
+
+    public static void SendP_Speed(int speed)
+    {
+    using (Packet _packet = new Packet())
+        {
+        string info = "SPD" + speed;
+        _packet.Write(info);
+#if UNITY_EDITOR
+        Debug.Log(".........SEND SPEED........... " + info);
+#endif
+
+        SendUDPData(_packet);
+        }
+    }
+
+    public static void SendP_Scale(int scale)
+    {
+    using (Packet _packet = new Packet())
+        {
+        string info = "SCA" + scale;
+        _packet.Write(info);
+#if UNITY_EDITOR
+        Debug.Log(".........SEND SCALE........... " + info);
+#endif
+
+        SendUDPData(_packet);
+        }
+    }
+
+    public static void SendP_Bright(int bright)
+    {
+    using (Packet _packet = new Packet())
+        {
+        string info = "BRI" + bright;
+        _packet.Write(info);
+#if UNITY_EDITOR
+        Debug.Log(".........SEND BRIGHT........... " + info);
+#endif
+
+        SendUDPData(_packet);
+        }
+    }
     #endregion
 }

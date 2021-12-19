@@ -106,6 +106,9 @@ public class LampClass : MonoBehaviour
 
 
     public void ModeAppear() {
+        GameObject button = null;
+        GameObject textIP = null;
+        GameObject setObj = null;
         foreach( KeyValuePair<string, int> kvp in modes )
         {
 #if UNITY_EDITOR
@@ -113,11 +116,14 @@ public class LampClass : MonoBehaviour
 #endif
             if (kvp.Value != 0)
             {
-                GameObject button = Instantiate(modePrefab, modePanel.transform);
-                GameObject textIP = button.transform.GetChild(0).gameObject;
+                button = Instantiate(modePrefab, modePanel.transform);
+                textIP = button.transform.GetChild(0).gameObject;
                 textIP.GetComponent<Text>().text = kvp.Key;
             }
         }
+        button =  modePanel.transform.GetChild(mode).gameObject;
+        setObj =  button.transform.GetChild(1).gameObject;
+        setObj.SetActive(true);
     }
 
 

@@ -26,6 +26,7 @@ public class ClientHandle : MonoBehaviour
         }
 
         private void UpdateUI(string _packet) {
+                // ChageFlag = true;
 #if UNITY_EDITOR
                 Debug.Log("____UPDATE UI_____");
 #endif        
