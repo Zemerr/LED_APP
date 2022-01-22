@@ -267,7 +267,6 @@ GameObject:
   - component: {fileID: 50671087}
   - component: {fileID: 50671089}
   - component: {fileID: 50671088}
-  - component: {fileID: 50671090}
   m_Layer: 5
   m_Name: Brightness
   m_TagString: Untagged
@@ -334,18 +333,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 50671086}
   m_CullTransparentMesh: 1
---- !u!114 &50671090
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 50671086}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a69c4c345bcb6b46aef7760ac7935b8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &53775497
 GameObject:
   m_ObjectHideFlags: 0
@@ -475,6 +462,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   modePrefab: {fileID: 6008620447786318659, guid: a756f28a4bcb86d49ac2564fb71c6fb4, type: 3}
   modePanel: {fileID: 1964976020}
+  SwitchButton: {fileID: 88964077}
+  ConnectionButton: {fileID: 0}
   ChageFlag: 0
   currentState: 1
   mode: 0
@@ -482,6 +471,17 @@ MonoBehaviour:
   scale: 0
   brightness: 0
   ONflag: 0
+--- !u!114 &88964077 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6521873915009461118, guid: 515273c49dd87f34bb972e17b42f5111, type: 3}
+  m_PrefabInstance: {fileID: 6521873913495113158}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9bd0463377e7dc4e9f8ab1647a756e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &92446752
 GameObject:
   m_ObjectHideFlags: 0
@@ -1404,9 +1404,9 @@ GameObject:
   - component: {fileID: 475201092}
   - component: {fileID: 475201091}
   - component: {fileID: 475201093}
-  - component: {fileID: 475201094}
   - component: {fileID: 475201095}
   - component: {fileID: 475201096}
+  - component: {fileID: 475201094}
   m_Layer: 5
   m_Name: Main
   m_TagString: Untagged
@@ -1494,7 +1494,6 @@ MonoBehaviour:
   ShowLamp: {fileID: 1410240141}
   radar: {fileID: 1789577781}
   IP: 
-  currentState: 0
 --- !u!114 &475201094
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1508,7 +1507,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   connectPanel: {fileID: 1131445512}
-  text: {fileID: 0}
+  text: {fileID: 1683523462}
+  Lamp: {fileID: 66933742}
 --- !u!114 &475201095
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5186,6 +5186,17 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1683523462 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6521873913986883433, guid: 515273c49dd87f34bb972e17b42f5111, type: 3}
+  m_PrefabInstance: {fileID: 6521873913495113158}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1688192417
 GameObject:
   m_ObjectHideFlags: 0
@@ -7620,5 +7631,9 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6521873914101829314, guid: 515273c49dd87f34bb972e17b42f5111, type: 3}
+      propertyPath: Lamp
+      value: 
+      objectReference: {fileID: 66933742}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 515273c49dd87f34bb972e17b42f5111, type: 3}

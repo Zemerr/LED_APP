@@ -11,6 +11,7 @@ public class LampClass : MonoBehaviour
 
     [SerializeField] private GameObject modePrefab;
     [SerializeField] private GameObject modePanel;
+    public GameObject ConnectionButton = null;
 
     public enum ConnectionState {
         Conncected,
@@ -82,23 +83,35 @@ public class LampClass : MonoBehaviour
         {
             if (setting.brightness != brightness) 
             {
-
+#if UNITY_EDITOR
+                Debug.Log("CHANGE BRIGHTNESS UI " + setting.brightness);
+#endif
             }
             if (setting.speed != speed)
             {
-
+#if UNITY_EDITOR
+                Debug.Log("CHANGE SPEED UI " + setting.speed);
+#endif
             }
             if (setting.scale != scale) 
             {
-
+#if UNITY_EDITOR
+                Debug.Log("CHANGE SCALE UI " + setting.scale);
+#endif
             }
             if (setting.mode != mode)
             {
-
+#if UNITY_EDITOR
+                Debug.Log("CHANGE MODE UI " + setting.mode);
+#endif
             }
             if (setting.ONflag != ONflag)
             {
-
+                ONflag = setting.ONflag;
+                ConnectionButton.gameObject.transform.GetChild(1).transform.GetChild(2).GetComponent<SwichBut>().SwitchOnOf(!ONflag, true);
+#if UNITY_EDITOR
+                Debug.Log("CHANGE ONFLAG UI " + setting.ONflag);
+#endif                
             }
             ChageFlag = false;
         }
@@ -121,9 +134,19 @@ public class LampClass : MonoBehaviour
                 textIP.GetComponent<Text>().text = kvp.Key;
             }
         }
-        button =  modePanel.transform.GetChild(mode).gameObject;
+        button =  modePanel.transform.GetChild(mode).gameObject; //Find current button for this mode
         setObj =  button.transform.GetChild(1).gameObject;
-        setObj.SetActive(true);
+        setObj.SetActive(true); // Activate green point on active mode
+    }
+
+    public void UpdateValues(int mode, int brightness, int speed, int scale, bool OnFlag)
+    {
+        setting.mode = mode;
+        setting.brightness = brightness;
+        setting.speed = speed;
+        setting.scale = scale;
+        setting.ONflag = OnFlag;
+        this.ChageFlag = true;
     }
 
 

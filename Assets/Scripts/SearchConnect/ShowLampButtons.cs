@@ -26,7 +26,7 @@ public class ShowLampButtons : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (network.currentState == LanSearch.enuState.Searching && couldAddlampBut)
+        if (LanSearch.currentState == LanSearch.enuState.Searching && couldAddlampBut)
         {
             if (IPtoADD != null)
             {
@@ -38,9 +38,18 @@ public class ShowLampButtons : MonoBehaviour
 #endif
                 // button.GetComponentsInChildren<>
                 couldAddlampBut = false;
-            IPtoADD = null;
+                IPtoADD = null;
             }
         }
 
     }
+
+    public void DeleteAllButtons()
+    {
+        foreach (Transform child in transform) {
+            if (child.gameObject != LampClass.instance.ConnectionButton)
+                GameObject.Destroy(child.gameObject);
+        }
+    }
+    
 }

@@ -614,6 +614,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   connectPanel: {fileID: 6521873914517467342}
   text: {fileID: 6521873913986883433}
+  Lamp: {fileID: 0}
 --- !u!1 &6521873914166456262
 GameObject:
   m_ObjectHideFlags: 0

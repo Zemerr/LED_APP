@@ -23,7 +23,7 @@ public class SwichBut : MonoBehaviour, IPointerDownHandler
         leftSwitchPos = leftSide.gameObject.transform.position;
         onColor = new Color32(82,157,209,255);
         ofColor = new Color32(212,111,120,255);
-
+        SwitchOnOf(true, true);
     }
 
 

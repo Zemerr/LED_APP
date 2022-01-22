@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Net;
-using UnityEngine;
+﻿using UnityEngine;
+using System;
 
 public class ClientHandle : MonoBehaviour
 {
@@ -25,8 +23,21 @@ public class ClientHandle : MonoBehaviour
 #endif
         }
 
+        //CURR 0 50 100 7 1
+
         private void UpdateUI(string _packet) {
-                // ChageFlag = true;
+                string[] subs = _packet.Split(' ');
+                int mode = Int32.Parse(subs[1]);
+                int brightness = Int32.Parse(subs[2]);
+                int speed = Int32.Parse(subs[3]);
+                int scale = Int32.Parse(subs[4]);
+                bool OnFlag = false;
+                if (Int32.Parse(subs[5]) == 1)
+                        OnFlag = true;
+                else
+                        OnFlag = false;
+
+                LampClass.instance.UpdateValues(mode, brightness, speed, scale, OnFlag);
 #if UNITY_EDITOR
                 Debug.Log("____UPDATE UI_____");
 #endif        

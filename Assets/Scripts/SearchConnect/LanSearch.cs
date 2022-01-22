@@ -24,7 +24,7 @@ public class LanSearch : MonoBehaviour
         public string strIP;
     } // Definition of a Received Message struct. This is the form in which we will store messages
 
-    public enuState currentState = enuState.NotActive;
+    public static enuState currentState = enuState.NotActive;
     private UdpClient objUDPClient; // The UDPClient we will use to send and receive messages
     public HashSet<ReceivedMessage> lstReceivedMessages; // The list we store all received messages in, when searching
 
@@ -61,7 +61,7 @@ public class LanSearch : MonoBehaviour
             // Determine out of our current state what the content of the message will be
             byte[] objByteMessageToSend = System.Text.Encoding.ASCII.GetBytes(NetworkingVal.findSereverLamp);
             // Send out the message
-            objUDPClient.Send(objByteMessageToSend, objByteMessageToSend.Length, new IPEndPoint(IPAddress.Broadcast, NetworkingVal.PORT));
+            objUDPClient.Send(objByteMessageToSend, objByteMessageToSend.Length, new IPEndPoint(IPAddress.Broadcast, NetworkingVal.PORT_FOR_SEARCH));
             // Restart the timer
             fTimeLastMessageSent = Time.time;
 
@@ -128,7 +128,8 @@ public class LanSearch : MonoBehaviour
 #endif
         // If the received message has content and it was not sent by ourselves...
         if (objByteMessage.Length > 0 &&
-            !objSendersIPEndPoint.Address.ToString().Equals(IP))
+            !objSendersIPEndPoint.Address.ToString().Equals(IP) &&
+            !objSendersIPEndPoint.Address.ToString().Equals(Client.instance.ip))
         {
             // Translate message to string
             string strReceivedMessage = System.Text.Encoding.ASCII.GetString(objByteMessage);
@@ -167,6 +168,7 @@ public class LanSearch : MonoBehaviour
     // Method to start this object searching for LAN Broadcast messages sent by players, used by the script itself
     private void StartSearching()
     {
+        ShowLamp.DeleteAllButtons();
         lstReceivedMessages.Clear();
         BeginAsyncReceive();
         fTimeSearchStarted = Time.time;
@@ -200,7 +202,7 @@ public class LanSearch : MonoBehaviour
         // If the previous broadcast session was for some reason not closed, close it now
         if (currentState != enuState.NotActive) StopBroadCasting();
         // Create the client
-        objUDPClient = new UdpClient(NetworkingVal.PORT);
+        objUDPClient = new UdpClient(NetworkingVal.PORT_FOR_SEARCH);
         objUDPClient.EnableBroadcast = true;
         // Reset sending timer
         fTimeLastMessageSent = Time.time;

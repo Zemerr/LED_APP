@@ -10,8 +10,8 @@ public class Client : MonoBehaviour
     public static Client instance;
     public static int dataBufferSize = 4096;
 
-    public string ip = "192.168.0.101";
-    public int port = 8888;
+    public string ip = "1.1.1.1";
+    public int port = NetworkingVal.PORT_FOR_SEARCH;
     public int myId = 3;
 
     public UDP udp;
@@ -28,6 +28,7 @@ public class Client : MonoBehaviour
         if (instance == null)
         {
             instance = this;
+            ip = "1.1.1.1";
         }
         else if (instance != this)
         {
@@ -43,7 +44,7 @@ public class Client : MonoBehaviour
         udp = new UDP();
     }
 
-    public void ConnectToServer()
+    public bool ConnectToServer()
     {
         InitializeClientData();
 
@@ -51,7 +52,19 @@ public class Client : MonoBehaviour
         Debug.Log("CONNECT TO SERVER " + ip);
 #endif
 
-        udp.Connect(port);
+        if (udp.Connect(NetworkingVal.PORT_FOR_CONNECT))
+            return true;
+        return false;
+    }
+
+    public void CloseServer()
+    {
+#if UNITY_EDITOR
+        Debug.Log("Disconnect from server " + ip);
+#endif
+
+        udp.Disconnect();
+        instance.ip =  "1.1.1.1";
     }
 
   
@@ -66,17 +79,33 @@ public class Client : MonoBehaviour
             endPoint = new IPEndPoint(IPAddress.Parse(instance.ip), instance.port);
         }
 
-        public void Connect(int _localPort)
+        public bool Connect(int _localPort)
         {
-            socket = new UdpClient(_localPort);
+            try {
+                socket = new UdpClient(_localPort);
 
-            socket.Connect(endPoint);
-            socket.BeginReceive(ReceiveCallback, null);
+                socket.Connect(endPoint);
+                socket.BeginReceive(ReceiveCallback, null);
 
-            using (Packet _packet = new Packet())
-            {
-                SendData(_packet);
+                using (Packet _packet = new Packet())
+                {
+                     _packet.Write("GET");
+                    SendData(_packet);
+                }
+                return true;
             }
+            catch(Exception ex)
+            {
+#if UNITY_EDITOR
+                Debug.Log("Error : " + ex.Message);
+#endif
+            return false;
+            }
+        }
+
+        public void Disconnect() {
+            socket.Close();
+            socket = null;
         }
 
         public void SendData(Packet _packet)
@@ -122,7 +151,7 @@ public class Client : MonoBehaviour
         private void HandleData(byte[] _data)
         {
 #if UNITY_EDITOR
-            Debug.Log("STARTer HandleData");
+            Debug.Log("START HandleData");
 #endif
             // using (Packet _packet = new Packet(_data))
             // {
